@@ -1,20 +1,53 @@
 const wordEl = document.getElementById("word");
 const wrongLettersEl = document.getElementById("wrong-letters");
 const playAgainBtn = document.getElementById("play-again");
+const newGameBtn = document.getElementById("new-game");
 const popup = document.getElementById("popup-container");
 const notification = document.getElementById("notification-container");
 const finalMessage = document.getElementById("final-message");
+const hintEl = document.getElementById("hint");
+const timerEl = document.getElementById("timer");
+const difficultyEl = document.getElementById("difficulty");
 
 const figureParts = document.querySelectorAll(".figure-part");
 
-const words = ["application", "programming", "interface", "wizard"];
+// Word data with hints
+const words = {
+  easy: [
+    { word: "cat", hint: "A common pet" },
+    { word: "sun", hint: "Appears every day" },
+    { word: "cup", hint: "Used for drinking" },
+  ],
+  medium: [
+    { word: "apple", hint: "A fruit" },
+    { word: "chair", hint: "Used for sitting" },
+    { word: "house", hint: "Where people live" },
+  ],
+  hard: [
+    { word: "dolphin", hint: "An aquatic mammal" },
+    { word: "giraffe", hint: "The tallest animal" },
+    { word: "galaxy", hint: "A collection of stars" },
+  ],
+};
 
-let selectedWord = words[Math.floor(Math.random() * words.length)];
+let selectedWord = "";
+let selectedHint = "";
+let correctLetters = [];
+let wrongLetters = [];
+let timer;
+let timeLeft = 60;
 
-const correctLetters = [];
-const wrongLetters = [];
+// Select random word and hint based on difficulty
+function selectWord(difficulty) {
+  const wordData = words[difficulty];
+  const randomIndex = Math.floor(Math.random() * wordData.length);
+  selectedWord = wordData[randomIndex].word;
+  selectedHint = wordData[randomIndex].hint;
+  displayWord();
+  displayHint();
+}
 
-//Show the hidden word
+// Display the hidden word
 function displayWord() {
   wordEl.innerHTML = `${selectedWord
     .split("")
@@ -30,18 +63,23 @@ function displayWord() {
 
   if (innerWord === selectedWord) {
     finalMessage.innerText = "Congratulations! You Won!";
+    clearInterval(timer);
     popup.style.display = "flex";
   }
 }
 
-//Update wrong letters
+// Display the hint
+function displayHint() {
+  hintEl.textContent = selectedHint || "No hint available";
+}
+
+// Update wrong letters
 function updateWrongLettersEl() {
-  //Display Wrong letters
   wrongLettersEl.innerHTML = `
         ${wrongLetters.length > 0 ? "<p>Wrong</p>" : ""}
-    ${wrongLetters.map((letter) => `<span>${letter}</span>`)}`;
+        ${wrongLetters.map((letter) => `<span>${letter}</span>`).join("")}`;
 
-  //Display figure parts
+  // Display figure parts
   figureParts.forEach((part, index) => {
     const errors = wrongLetters.length;
 
@@ -52,14 +90,15 @@ function updateWrongLettersEl() {
     }
   });
 
-  //check if lost
+  // Check if lost
   if (wrongLetters.length === figureParts.length) {
-    finalMessage.innerText = "Unfortunately You Lost";
+    finalMessage.innerText = "Unfortunately You Lost!";
+    clearInterval(timer);
     popup.style.display = "flex";
   }
 }
 
-//show notification
+// Show notification
 function showNotification() {
   notification.classList.add("show");
 
@@ -68,7 +107,24 @@ function showNotification() {
   }, 2000);
 }
 
-//keydown letter press
+// Start the timer
+function startTimer() {
+  clearInterval(timer);
+  timeLeft = 60;
+  timerEl.textContent = timeLeft;
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      finalMessage.innerText = "Time's Up! You Lost!";
+      popup.style.display = "flex";
+    }
+  }, 1000);
+}
+
+// Handle keydown event
 window.addEventListener("keydown", (e) => {
   if (e.keyCode >= 65 && e.keyCode <= 90) {
     const letter = e.key;
@@ -76,7 +132,6 @@ window.addEventListener("keydown", (e) => {
     if (selectedWord.includes(letter)) {
       if (!correctLetters.includes(letter)) {
         correctLetters.push(letter);
-
         displayWord();
       } else {
         showNotification();
@@ -84,7 +139,6 @@ window.addEventListener("keydown", (e) => {
     } else {
       if (!wrongLetters.includes(letter)) {
         wrongLetters.push(letter);
-
         updateWrongLettersEl();
       } else {
         showNotification();
@@ -93,17 +147,20 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-//Reset Game
-playAgainBtn.addEventListener("click", () => {
-  //Empty arrays
-  correctLetters.splice(0);
-  wrongLetters.splice(0);
-
-  selectedWord = words[Math.floor(Math.random() * words.length)];
-
-  displayWord();
+// Start a new game
+function startGame() {
+  const difficulty = difficultyEl.value;
+  correctLetters = [];
+  wrongLetters = [];
+  selectWord(difficulty);
   updateWrongLettersEl();
   popup.style.display = "none";
-});
+  startTimer();
+}
 
-displayWord();
+// Reset the game when clicking "Play Again" or "New Game"
+playAgainBtn.addEventListener("click", startGame);
+newGameBtn.addEventListener("click", startGame);
+
+// Initial Game Setup
+startGame();
