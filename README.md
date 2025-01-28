@@ -18,7 +18,7 @@ Hangman is a timeless word game where players try to guess a hidden word before 
 ---
 
 ## 🖥️ **Live Demo**
-> 🔗 [Play the Hangman Game](#) *(Add link if hosted online)*
+> 🔗 [Play the Hangman Game](https://hangman-v2-tirth.vercel.app/)
 
 ---
 
@@ -57,16 +57,14 @@ This project is built using:
 
 ## 🛠️ **Installation & Running Locally**
 ### 1️⃣ Clone the Repository
-    ```
-    git clone https://github.com/your-username/hangman-game.git
+    https://github.com/CodeTirtho97/Hangman-v2.git
     cd hangman-game
-    ```
+
 ## 🚀 Running the Game Locally
 
 ### 2️⃣ Open the `index.html` file in a browser  
 Just **double-click** the `index.html` file or use:
 
-```bash
     # For macOS
     open index.html   
 
@@ -100,6 +98,9 @@ Want to **customize** the game? Here’s how:
 
 ## 📸 Screenshots  
 ### 🎮 **Gameplay Screenshot**  
+![image](https://github.com/user-attachments/assets/75b95293-38d2-40a1-8f95-8a4e3ece065b)
+![image](https://github.com/user-attachments/assets/8e4192e4-c9ec-45cc-8727-01e1d5e783cb)
+![image](https://github.com/user-attachments/assets/ce19ffbc-89b6-4e7d-8eea-36768c832a96)
 
 ---
 
